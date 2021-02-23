@@ -7,10 +7,10 @@ import { Text } from "react-native"
 
 import Colors from "../constants/Colors"
 import useColorScheme from "../hooks/useColorScheme"
-import AddProductScreen from "../screens/AddProductScreen"
-import ProductScreen from "../screens/ProductScreen"
+import AddProductScreen from "../screens/wholesalers/AddProductScreen"
+import ProductScreen from "../screens/retailers/ProductScreen"
 import SettingsScreen from "../screens/SettingsScreen"
-import WholesalerScreen from "../screens/WholesalerScreen"
+import WholesalerScreen from "../screens/wholesalers/WholesalerScreen"
 import {
   WholesalerBottomTabParamList,
   WholesalerParamList,

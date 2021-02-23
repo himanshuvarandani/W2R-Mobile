@@ -55,9 +55,13 @@ export default function RegisterScreen({ navigation }) {
         if (response.data.status === "ok") {
           AsyncStorage.setItem("key", id).then(() => {
             if (type === "R") {
-              navigation.replace("Retailer")
+              AsyncStorage.setItem("type", "R").then(() => {
+                navigation.replace("Retailer")
+              })
             } else {
-              navigation.replace("Wholesaler")
+              AsyncStorage.setItem("type", "W").then(() => {
+                navigation.replace("Wholesaler")
+              })
             }
           })
         } else {

@@ -30,9 +30,13 @@ export default function LoginScreen({ navigation }) {
         if (response.data.length) {
           AsyncStorage.setItem("key", response.data[0].id).then(() => {
             if (response.data[0].type === "R") {
-              navigation.replace("Retailer")
+              AsyncStorage.setItem("type", "R").then(() => {
+                navigation.replace("Retailer")
+              })
             } else {
-              navigation.replace("Wholesaler")
+              AsyncStorage.setItem("type", "W").then(() => {
+                navigation.replace("Wholesaler")
+              })
             }
           })
         } else {
