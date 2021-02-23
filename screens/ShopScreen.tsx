@@ -11,7 +11,7 @@ import {
 
 export default function ShopScreen({ navigation, route }) {
   const [products, setProducts] = React.useState([])
-  const wholesalerId = React.useState(route.params.wholesalerId)
+  const wholesalerId = route.params.wholesalerId
 
   React.useEffect(() => {
     async function myAsyncFunction() {
@@ -39,6 +39,7 @@ export default function ShopScreen({ navigation, route }) {
               onPress={() => {
                 navigation.navigate("ProductScreen", {
                   product: element,
+                  wholesalerId: wholesalerId,
                 })
               }}
               key={element._id}

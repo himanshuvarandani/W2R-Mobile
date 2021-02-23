@@ -29,6 +29,7 @@ export default function WholesalerScreen({ navigation }) {
       })
       .then((response) => {
         handleShop(response.data)
+        navigation.setOptions({ headerTitle: response.data.shopName })
       })
       .catch((error) => {
         console.log(error)
@@ -55,16 +56,10 @@ export default function WholesalerScreen({ navigation }) {
     })
   }
 
-  React.useEffect(() => {
-    navigation.setOptions({ headerTitle: shop.shopName })
-  })
-
   return (
     <View style={styles.container} onLayout={call}>
       <ScrollView>
-        <Text style={styles.title} onPress={call}>
-          Your Products
-        </Text>
+        <Text style={styles.title}>Your Products</Text>
         {products.map((element: any) => {
           return (
             <TouchableOpacity

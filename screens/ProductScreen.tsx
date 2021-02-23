@@ -1,5 +1,9 @@
+import AsyncStorage from "@react-native-async-storage/async-storage"
+import axios from "axios"
 import React from "react"
 import {
+  Alert,
+  Button,
   ImageBackground,
   ScrollView,
   StyleSheet,
@@ -7,8 +11,87 @@ import {
   View,
 } from "react-native"
 
-export default function ProductScreen({ route }) {
+export default function ProductScreen({ navigation, route }) {
   const product = route.params.product
+  const wholesalerId = route.params.wholesalerId
+
+  const check = (cart, retailerId, productId, price) => {
+    if (cart.wholesalerId == "") {
+      updateRetailerCart(retailerId, [productId], [1], price)
+    } else {
+      const productIds = cart.productIds
+      const quantities = cart.quantities
+
+      productIds.push(productId)
+      quantities.push(1)
+
+      if (cart.wholesalerId === wholesalerId) {
+        updateRetailerCart(
+          retailerId,
+          productIds,
+          quantities,
+          cart.totalPrice + price
+        )
+      } else {
+        Alert.alert(
+          "Cart",
+          "Did you want to empty the cart for adding this product from another shop?",
+          [
+            {
+              text: "Yes",
+              onPress: () =>
+                updateRetailerCart(retailerId, [productId], [1], price),
+            },
+            {
+              text: "No",
+              style: "cancel",
+            },
+          ]
+        )
+      }
+    }
+  }
+
+  const updateRetailerCart = (
+    retailerId,
+    productIds,
+    quantities,
+    totalPrice
+  ) => {
+    axios
+      .post("http://10.0.2.2:5000/update/update_retailer_cart", {
+        retailerId: retailerId,
+        wholesalerId: wholesalerId,
+        productIds: productIds,
+        quantities: quantities,
+        totalPrice: totalPrice,
+      })
+      .then((response) => {
+        if (response.data.status === "ok") {
+          navigation.goBack()
+        } else {
+          alert("Something went wrong.")
+        }
+      })
+      .catch(function (error) {
+        console.log(error)
+      })
+  }
+
+  const addProductIdToCart = (productId, price) => {
+    AsyncStorage.getItem("key").then((retailerId) => {
+      axios
+        .get("http://10.0.2.2:5000/fetch/retailer_cart_details", {
+          params: { retailerId: retailerId },
+        })
+        .then((response) => {
+          check(response.data, retailerId, productId, price)
+        })
+        .catch(function (error) {
+          console.log(error)
+        })
+    })
+  }
 
   return (
     <View style={styles.container}>
@@ -26,6 +109,10 @@ export default function ProductScreen({ route }) {
             <Text style={styles.text}>Brand :- {product.brand}</Text>
             <Text style={styles.text}>Price :- Rs.{product.price}</Text>
             <Text style={styles.text}>Quantity :- {product.quantity}</Text>
+            <Button
+              title="Add to Cart"
+              onPress={() => addProductIdToCart(product._id, product.price)}
+            />
             {/* <Image
               source={{
                 uri:

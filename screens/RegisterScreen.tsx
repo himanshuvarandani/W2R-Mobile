@@ -69,43 +69,68 @@ export default function RegisterScreen({ navigation }) {
       })
   }
 
-  const register = async (email, pass, type, name, shopName, shopAddress) => {
+  const addRetailer = (email, pass, type, name, shopName, shopAddress) => {
+    axios
+      .post("http://10.0.2.2:5000/add/add_retailer", {
+        email: email,
+        name: name,
+        shopName: shopName,
+        shopAddress: shopAddress,
+      })
+      .then((response) => {
+        if (response.data.status == "ok") {
+          addRetailerCart(response.data.id, email, pass, type)
+        } else {
+          alert("Something went wrong.")
+        }
+      })
+      .catch(function (error) {
+        console.log(error)
+      })
+  }
+
+  const addRetailerCart = (retailerId, email, pass, type) => {
+    axios
+      .post("http://10.0.2.2:5000/add/add_retailer_cart", {
+        retailerId: retailerId,
+      })
+      .then((response) => {
+        if (response.data.status === "ok") {
+          add(email, pass, retailerId, type)
+        } else {
+          alert("Something went wrong.")
+        }
+      })
+      .catch(function (error) {
+        console.log(error)
+      })
+  }
+
+  const addWholesaler = (email, pass, type, name, shopName, shopAddress) => {
+    axios
+      .post("http://10.0.2.2:5000/add/add_wholesaler", {
+        email: email,
+        name: name,
+        shopName: shopName,
+        shopAddress: shopAddress,
+      })
+      .then((response) => {
+        if (response.data.status == "ok") {
+          add(email, pass, response.data.id, type)
+        } else {
+          alert("Something went wrong.")
+        }
+      })
+      .catch(function (error) {
+        console.log(error)
+      })
+  }
+
+  const register = (email, pass, type, name, shopName, shopAddress) => {
     if (type === "R") {
-      await axios
-        .post("http://10.0.2.2:5000/add/add_retailer", {
-          email: email,
-          name: name,
-          shopName: shopName,
-          shopAddress: shopAddress,
-        })
-        .then((response) => {
-          if (response.data.status == "ok") {
-            add(email, pass, response.data.id, type)
-          } else {
-            alert("Something went wrong.")
-          }
-        })
-        .catch(function (error) {
-          console.log(error)
-        })
+      addRetailer(email, pass, type, name, shopName, shopAddress)
     } else {
-      await axios
-        .post("http://10.0.2.2:5000/add/add_wholesaler", {
-          email: email,
-          name: name,
-          shopName: shopName,
-          shopAddress: shopAddress,
-        })
-        .then((response) => {
-          if (response.data.status == "ok") {
-            add(email, pass, response.data.id, type)
-          } else {
-            alert("Something went wrong.")
-          }
-        })
-        .catch(function (error) {
-          console.log(error)
-        })
+      addWholesaler(email, pass, type, name, shopName, shopAddress)
     }
   }
 
